@@ -51,7 +51,7 @@
             <div class="row">
                 <form name="postForm" ng-submit="toAddSecret()" novalidate>
                     <div class="col-lg-2">
-                        <input type="text" class="form-control" ng-model="nickName" placeholder="nickname" autocomplete="off" required>
+                        <input type="text" class="form-control" ng-model="nickName" placeholder="nickname" autofocus autocomplete="off" required>
                     </div>
                     <div class="col-lg-9">
                         <input type="text" class="form-control" ng-model="secretMessage" placeholder="whats your secret..." autocomplete="off" required>
@@ -64,7 +64,8 @@
 
             <div class="row">
                 <div class="col-lg-12">
-                    <h2>Revealed secrets so far..</h2>
+                    <h2>Revealed <ng-pluralize count="secrets.length" when="secretForms"></ng-pluralize> so far..</h2>
+
                     <div ng-repeat="secret in secrets | orderBy: '-id' | filter:searchText">
                         <div class="bs-component">
                             <div class="alert alert-danger">
@@ -99,7 +100,7 @@
 
 
         <script type="text/ng-template" id="myModalContent.html">
-            <form name="modalForm" ng-submit="toUpdateSecret()" novalidate>
+            <form name="modalForm" ng-submit="ok()" novalidate>
                 <div class="modal-header">
                     <h3 class="modal-title">Update Secret!</h3>
                 </div>
@@ -111,7 +112,7 @@
                                 Nick Name:
                             </div>
                             <div class="col-lg-9">
-                                <input class="form-control" type="text" ng-model="mNickName" autocomplete="off" required>
+                                <input class="form-control" type="text" ng-model="items.secretUser" autocomplete="off" required>
                             </div>
                         </div>
                         <div class="row" style="padding-top: 10px">
@@ -119,7 +120,7 @@
                                 Secret Message:
                             </div>
                             <div class="col-lg-9">
-                                <textarea class="form-control" rows="3" ng-model="mSecretMessage" required></textarea>
+                                <textarea class="form-control" rows="3" ng-model="items.secretMessage" required></textarea>
                             </div>
                         </div>
                         <div class="row">

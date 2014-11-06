@@ -16,13 +16,9 @@ exports.viewAll = function(req, res) {
 }
 
 exports.createRecord = function(req, res) {
-
     var receivedData = toDecodeAndParse(req.query.input);
-
     var date = new Date();
-
     receivedData.data.post_date = date;
-
     db.insert('secrets', receivedData.data, function(err, info) {
         if (err) {
             res.json({
@@ -76,7 +72,7 @@ exports.updateByID = function(req, res) {
     var date = new Date();
 
     receivedData.data.post_date = date;
-    
+
     db.where({
         id: receivedData.id
     }).update('secrets', receivedData.data, function(err) {

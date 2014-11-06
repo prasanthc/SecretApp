@@ -5,7 +5,17 @@ secretApp.controller('homeCtrl', function($scope, Secret, $modal, $log, $window)
         message: 'Eternal Peace!'
     };
 
+     $scope.secretForms = {
+      0: 'no secrets',
+      one: '{} secret',
+      other: '{} secrets'
+    };
+
     $scope.init = function() {
+        $scope.retrieveAllSecrets();
+    };
+
+    $scope.retrieveAllSecrets = function() {
         Secret.getAllSecrets($scope.data.message)
             .then(function(data) {
                 if (data.result) {
@@ -15,8 +25,8 @@ secretApp.controller('homeCtrl', function($scope, Secret, $modal, $log, $window)
                 // console.log(error);
                 alert('Something went wrong:' + error);
             });
-    };
 
+    }
 
     $scope.toAddSecret = function() {
         var record = {
@@ -32,9 +42,10 @@ secretApp.controller('homeCtrl', function($scope, Secret, $modal, $log, $window)
             .then(function(data) {
                 if (data.result) {
                     $scope.result = data.result;
-
                     alert('posted successfully');
-                    $window.location.reload();
+                    $scope.retrieveAllSecrets();
+                    $scope.nickName = "";
+                    $scope.secretMessage = "";
                 }
             }, function(error) {
                 // console.log(error);
@@ -53,7 +64,7 @@ secretApp.controller('homeCtrl', function($scope, Secret, $modal, $log, $window)
                 if (data.result) {
                     $scope.result = data.result;
                     alert($scope.result);
-                    $window.location.reload();
+                    $scope.retrieveAllSecrets();
                 }
             }, function(error) {
                 // console.log(error);
@@ -82,8 +93,26 @@ secretApp.controller('homeCtrl', function($scope, Secret, $modal, $log, $window)
         });
 
         modalInstance.result.then(function(secret) {
-            $scope.nickName = secret.nickName;
-            $scope.picture = secret.message;
+            var record = {
+                id: secret.secretID,
+                data: {
+                    user: secret.secretUser,
+                    message: secret.secretMessage,
+                    post_date: '',
+                    post_location: 'New York'
+                }
+            };
+
+            Secret.updateSecret(record)
+                .then(function(data) {
+                    if (data.result) {
+                        // alert('posted successfully');
+                        $scope.retrieveAllSecrets();
+                    }
+                }, function(error) {
+                    alert('Something went wrong:' + error);
+                    // console.log('Something went wrong:' + error);
+                });
 
         }, function() {
             $log.info('Modal dismissed at: ' + new Date());
@@ -97,31 +126,16 @@ secretApp.controller('homeCtrl', function($scope, Secret, $modal, $log, $window)
 
 secretApp.controller('ModalInstanceCtrl', function($scope, $log, $modalInstance, $window, items, Secret) {
 
-    $scope.mNickName = items.secretUser;
-    $scope.mSecretMessage = items.secretMessage;
+    $scope.items = items;
+
+
+    $scope.ok = function() {
+        $modalInstance.close($scope.items);
+    };
+
 
     $scope.toUpdateSecret = function() {
-        var record = {
-            id: items.secretID,
 
-            data: {
-                user: $scope.mNickName,
-                message: $scope.mSecretMessage,
-                post_date: '',
-                post_location: 'New York'
-            }
-        };
-
-        Secret.updateSecret(record)
-            .then(function(data) {
-                if (data.result) {
-                    $scope.result = data.result;
-                    $window.location.reload();
-                }
-            }, function(error) {
-                alert('Something went wrong:' + error);
-                // console.log('Something went wrong:' + error);
-            });
     };
 
 
