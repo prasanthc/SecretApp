@@ -7,4 +7,8 @@ secretApp.config(['$routeProvider', '$locationProvider', function($routeProvider
     //     controller: homeCtrl
     // });
 
+      $routeProvider.when('/', {
+          templateUrl: 'home.html',
+          controller: 'homeCtrl'          
+        });
 }])
