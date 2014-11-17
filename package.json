@@ -9,6 +9,7 @@
   "author": "prasanthc",
   "license": "ISC",
   "dependencies": {
+    "cors": "^2.5.2",
     "express": "^4.10.1",
     "mysql-activerecord": "^0.8.6"
   }
