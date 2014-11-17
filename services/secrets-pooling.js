@@ -18,6 +18,7 @@ exports.viewAll = function(req, res) {
 }
 
 exports.viewFiveRecords = function(req, res) {
+    console.log('Inside view Five Records');
     var tagToSearch = null;
     var tempItemOrder = null;
 
@@ -41,8 +42,8 @@ exports.viewFiveRecords = function(req, res) {
 
     if (receivedData.searchTag) {
         tagToSearch = receivedData.searchTag;
-    }
-
+    }    
+    console.log(receivedData);
     var recordSet = (receivedData.pageNo - 1) * 5;
     Db.getNewAdapter(function(db) {
         db
