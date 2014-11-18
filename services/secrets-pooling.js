@@ -1,4 +1,5 @@
 var Db = require('./db');
+var crypto = require('../utils/crypto')
 
 exports.viewAll = function(req, res) {
     Db.getNewAdapter(function(db) {
@@ -18,23 +19,18 @@ exports.viewAll = function(req, res) {
 }
 
 exports.viewFiveRecords = function(req, res) {
-    console.log('Inside view Five Records');
     var tagToSearch = null;
     var tempItemOrder = null;
 
     // to test
     // var receivedData = {
     //     pageNo: 1,
-    //     tag: {
-    //         post_location: 'chennai'
-    //     },
-    //     orderBy: {
-    //         field: 'user',
-    //         ascOrDesc: 'asc'
+    //     searchTag: {
+    //         post_location: 'London'
     //     }
     // }
 
-    var receivedData = toDecodeAndParse(req.query.input);
+    var receivedData = crypto.decode(req.query.input);
 
     if (receivedData.orderBy) {
         tempItemOrder = receivedData.orderBy.field + " " + receivedData.orderBy.ascOrDesc;
@@ -42,8 +38,7 @@ exports.viewFiveRecords = function(req, res) {
 
     if (receivedData.searchTag) {
         tagToSearch = receivedData.searchTag;
-    }    
-    console.log(receivedData);
+    }
     var recordSet = (receivedData.pageNo - 1) * 5;
     Db.getNewAdapter(function(db) {
         db
@@ -66,7 +61,7 @@ exports.viewFiveRecords = function(req, res) {
 }
 
 exports.createRecord = function(req, res) {
-    var receivedData = toDecodeAndParse(req.query.input);
+    var receivedData = crypto.decode(req.query.input);
     var date = new Date();
     receivedData.data.post_date = date;
     Db.getNewAdapter(function(db) {
@@ -85,20 +80,13 @@ exports.createRecord = function(req, res) {
     });
 }
 
-function toDecodeAndParse(encodedData) {
-    var decodedData = new Buffer(encodedData, 'base64').toString('ascii')
-    var parsedData = JSON.parse(decodedData)
-    return parsedData;
-}
-
 exports.viewByID = function(req, res) {
-    var input = {
-        post_location: 'new york',
-        user: 'tester'
-    }
-    input = null;
-    // var receivedData = toDecodeAndParse(req.query.input);
-    var receivedData = req.query.input;
+    // var input = {
+    //     post_location: 'new york',
+    //     user: 'tester'
+    // }
+
+    var receivedData = crypto.decode(req.query.input);
     Db.getNewAdapter(function(db) {
         db.where(input)
             .get('secrets', function(err, results, fields) {
@@ -120,7 +108,7 @@ exports.viewRecordsByTag = function(req, res) {
     // var input = {
     //         post_location: 'New York'
     //     }
-    var receivedData = toDecodeAndParse(req.query.input);
+    var receivedData = crypto.decode(req.query.input);
     Db.getNewAdapter(function(db) {
         db.where(input)
             .get('secrets', function(err, results, fields) {
@@ -147,7 +135,7 @@ exports.updateByID = function(req, res) {
     //     }
     // };
 
-    var receivedData = toDecodeAndParse(req.query.input);
+    var receivedData = crypto.decode(req.query.input);
 
     var date = new Date();
 
@@ -174,7 +162,7 @@ exports.deleteByID = function(req, res) {
     // var input = {
     //     id: 303
     // }
-    var receivedData = toDecodeAndParse(req.query.input);
+    var receivedData = crypto.decode(req.query.input);
     Db.getNewAdapter(function(db) {
         db.where({
                 id: receivedData.id

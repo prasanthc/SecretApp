@@ -12,8 +12,6 @@ app.use(cors());
 
 app.use(function(req, res, next) {
     var clientKey = req.headers['x-auth-key'];
-    console.log('req.method: ' + req.method)
-    console.log('auth-key: '+ req.headers['x-auth-key']);
     var acceptedKey = 'abc123';
     if (clientKey !== acceptedKey) {
         res.status(401).end();
