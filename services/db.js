@@ -1,7 +1,7 @@
 var Db = require('mysql-activerecord');
 
 var pool = new Db.Pool({
-    server: 'localhost',
+    server: '127.0.0.1',
     username: 'adminmVpqdHM',
     password: 'E7MhcAeUBeWl',
     database: 'secretypost'
