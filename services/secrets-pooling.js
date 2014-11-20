@@ -1,6 +1,30 @@
 var Db = require('./db');
 var crypto = require('../utils/crypto')
 
+
+exports.totalCount = function(req, res, next) {
+    var receivedData = crypto.decode(req.query.input);
+    var searchTags = null;
+
+    if (receivedData.searchTag) {
+        searchTags = receivedData.searchTag;
+    }
+
+    Db.getNewAdapter(function(db) {
+        db.where(searchTags).count('secrets', function(err, results, fields) {
+            if (err) {
+                res.json({
+                    error: err
+                })
+            } else {
+                req.tCount = results;
+            }
+            db.releaseConnection();
+        });
+    });
+    next();
+}
+
 exports.viewAll = function(req, res) {
     Db.getNewAdapter(function(db) {
         db.get('secrets', function(err, results, fields) {
@@ -50,8 +74,9 @@ exports.viewFiveRecords = function(req, res) {
                     res.json({
                         error: err
                     })
-                } else {
-                    res.json({
+                } else { 
+                    res.json({    
+                    	totalCount: req.tCount,
                         result: results
                     })
                 }
