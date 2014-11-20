@@ -13,15 +13,15 @@ var port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
 
 app.use(cors());
 
-app.use(function(req, res, next) {
-    var clientKey = req.headers['x-auth-key'];
-    var acceptedKey = 'abc123';
-    if (clientKey !== acceptedKey) {
-        res.status(401).end();
-    } else {
-        next();
-    }
-});
+// app.use(function(req, res, next) {
+//     var clientKey = req.headers['x-auth-key'];
+//     var acceptedKey = 'abc123';
+//     if (clientKey !== acceptedKey) {
+//         res.status(401).end();
+//     } else {
+//         next();
+//     }
+// });
 
 // app.use(express.static(__dirname + '/public'));
 
