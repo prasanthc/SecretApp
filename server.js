@@ -6,10 +6,7 @@ var express = require('express'),
 
 var app = express()
 
-// app.set('port', 3000);
-
-var ipaddress = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
-var port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
+app.set('port', 3000);
 
 app.use(cors());
 
@@ -25,7 +22,7 @@ app.use(function(req, res, next) {
 
 // app.use(express.static(__dirname + '/public'));
 
-app.get('/', function(req, res) {})
+app.get('/', function(req, res) {}) 
 
 app.get('/secrets', secrets.viewAll)
 
@@ -42,7 +39,7 @@ app.put('/secret/update', secrets.updateByID)
 app.delete('/secret/delete', secrets.deleteByID)
 
 
-var server = app.listen(port, ipaddress, function() {
+var server = app.listen(app.get('port'),function() {
     var host = server.address().address
     var port = server.address().port
     console.log('Listening at http://%s:%s', host, port);
