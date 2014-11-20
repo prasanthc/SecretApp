@@ -2,10 +2,9 @@ var Db = require('mysql-activerecord');
 
 var pool = new Db.Pool({
     server: 'localhost',
-    username: 'root',
-    password: 'eternalpeace',
-    database: 'testing'
+    username: 'adminmVpqdHM',
+    password: 'E7MhcAeUBeWl',
+    database: 'secretypost'
 });
 
 exports.getNewAdapter = pool.getNewAdapter.bind(pool)
-
