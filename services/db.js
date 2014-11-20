@@ -7,4 +7,5 @@ var pool = new Db.Pool({
     database: 'secretypost'
 });
 
+console.log("MySQL Host: "+ process.env.OPENSHIFT_MYSQL_DB_HOST);
 exports.getNewAdapter = pool.getNewAdapter.bind(pool)
