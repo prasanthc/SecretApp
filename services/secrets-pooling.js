@@ -87,7 +87,7 @@ exports.viewFiveRecords = function(req, res) {
 
 exports.createRecord = function(req, res) {
     var receivedData = crypto.decode(req.query.input);
-    var date = new Date();
+    var date = Date.now();
     receivedData.data.post_date = date;
     Db.getNewAdapter(function(db) {
         db.insert('secrets', receivedData.data, function(err, info) {
@@ -163,11 +163,8 @@ exports.updateByID = function(req, res) {
     // };
 
     var receivedData = crypto.decode(req.query.input);
-
     var date = Date.now();
-
     receivedData.data.post_date = date;
-    console.log(JSON.stringify(receivedData, null, 2));
     Db.getNewAdapter(function(db) {
         db.where({
             id: receivedData.id
