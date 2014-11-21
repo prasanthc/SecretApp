@@ -74,9 +74,9 @@ exports.viewFiveRecords = function(req, res) {
                     res.jsonp({
                         error: err
                     })
-                } else { 
-                    res.jsonp({    
-                    	totalCount: req.tCount,
+                } else {
+                    res.jsonp({
+                        totalCount: req.tCount,
                         result: results
                     })
                 }
@@ -92,10 +92,12 @@ exports.createRecord = function(req, res) {
     Db.getNewAdapter(function(db) {
         db.insert('secrets', receivedData.data, function(err, info) {
             if (err) {
+
                 res.jsonp({
                     error: err
                 })
             } else {
+                console.log((new Date()) + 'one record inserted');
                 res.jsonp({
                     result: 'Record inserted at ' + info.insertId
                 })
@@ -164,7 +166,7 @@ exports.updateByID = function(req, res) {
 
     var date = new Date();
 
-    receivedData.data.post_date = date;
+    receivedData.data.post_date = Date.now();
     Db.getNewAdapter(function(db) {
         db.where({
             id: receivedData.id
@@ -174,6 +176,8 @@ exports.updateByID = function(req, res) {
                     error: err
                 })
             } else {
+
+                console.log((new Date()) + 'one record updated');
                 res.jsonp({
                     result: 'Record updated'
                 })
@@ -198,6 +202,7 @@ exports.deleteByID = function(req, res) {
                         error: err
                     })
                 } else {
+                    console.log((new Date()) + 'one record deleted');
                     res.jsonp({
                         result: 'Record Deleted'
                     })
