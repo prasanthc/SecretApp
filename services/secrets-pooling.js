@@ -168,6 +168,9 @@ exports.updateByID = function(req, res) {
 
     receivedData.data.post_date = date;
     console.log(JSON.stringify(receivedData, null, 2));
+    if (receivedData.data.post_date instanceof Date) {
+        console.log("Date");
+    }
     Db.getNewAdapter(function(db) {
         db.where({
             id: receivedData.id
