@@ -36,11 +36,11 @@ app.get('/secrets/viewByTag', secrets.viewRecordsByTag)
 
 app.get('/secret/view', secrets.viewByID)
 
-app.post('/secret/create', secrets.createRecord)
+app.get('/secret/create', secrets.createRecord)
 
-app.put('/secret/update', secrets.updateByID)
+app.get('/secret/update', secrets.updateByID)
 
-app.delete('/secret/delete', secrets.deleteByID)
+app.get('/secret/delete', secrets.deleteByID)
 
 
 var server = app.listen(port, ipaddress, function() {
