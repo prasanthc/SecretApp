@@ -29,11 +29,11 @@ exports.viewAll = function(req, res) {
     Db.getNewAdapter(function(db) {
         db.get('secrets', function(err, results, fields) {
             if (err) {
-                res.json({
+                res.jsonp({
                     error: err
                 })
             } else {
-                res.json({
+                res.jsonp({
                     result: results
                 })
             }
