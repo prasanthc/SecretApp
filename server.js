@@ -26,7 +26,9 @@ app.use(cors());
 
 // app.use(express.static(__dirname + '/public'));
 
-app.get('/', function(req, res) {}) 
+app.get('/', function(req, res) {
+    res.send(new Date() + "Server is running. Ip address: " + ipaddress + "port: " + port);
+})
 
 app.get('/secrets', secrets.viewAll)
 
@@ -47,5 +49,5 @@ var server = app.listen(port, ipaddress, function() {
     // var host = server.address().address
     // var port = server.address().port
     // console.log('Listening at http://%s:%s', host, port);
-     console.log((new Date()) + ' Server is listening on port ' + port);
+    console.log((new Date()) + ' Server is listening on port ' + port);
 })
