@@ -6,19 +6,23 @@ var express = require('express'),
 
 var app = express()
 
-app.set('port', 3000);
+// app.set('port', 3000);
+
+var ipaddress = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
+var port = process.env.OPENSHIFT_NODEJS_PORT || 3000;
+
 
 app.use(cors());
 
-app.use(function(req, res, next) {
-    var clientKey = req.headers['x-auth-key'];
-    var acceptedKey = 'abc123';
-    if (clientKey !== acceptedKey) {
-        res.status(401).end();
-    } else {
-        next();
-    }
-});
+// app.use(function(req, res, next) {
+//     var clientKey = req.headers['x-auth-key'];
+//     var acceptedKey = 'abc123';
+//     if (clientKey !== acceptedKey) {
+//         res.status(401).end();
+//     } else {
+//         next();
+//     }
+// });
 
 // app.use(express.static(__dirname + '/public'));
 
@@ -32,15 +36,16 @@ app.get('/secrets/viewByTag', secrets.viewRecordsByTag)
 
 app.get('/secret/view', secrets.viewByID)
 
-app.post('/secret/create', secrets.createRecord)
+app.get('/secret/create', secrets.createRecord)
 
-app.put('/secret/update', secrets.updateByID)
+app.get('/secret/update', secrets.updateByID)
 
-app.delete('/secret/delete', secrets.deleteByID)
+app.get('/secret/delete', secrets.deleteByID)
 
 
-var server = app.listen(app.get('port'),function() {
-    var host = server.address().address
-    var port = server.address().port
-    console.log('Listening at http://%s:%s', host, port);
+var server = app.listen(port, ipaddress, function() {
+    // var host = server.address().address
+    // var port = server.address().port
+    // console.log('Listening at http://%s:%s', host, port);
+     console.log((new Date()) + ' Server is listening on port ' + port);
 })

@@ -13,7 +13,7 @@ exports.totalCount = function(req, res, next) {
     Db.getNewAdapter(function(db) {
         db.where(searchTags).count('secrets', function(err, results, fields) {
             if (err) {
-                res.json({
+                res.jsonp({
                     error: err
                 })
             } else {
@@ -29,11 +29,11 @@ exports.viewAll = function(req, res) {
     Db.getNewAdapter(function(db) {
         db.get('secrets', function(err, results, fields) {
             if (err) {
-                res.json({
+                res.jsonp({
                     error: err
                 })
             } else {
-                res.json({
+                res.jsonp({
                     result: results
                 })
             }
@@ -71,12 +71,12 @@ exports.viewFiveRecords = function(req, res) {
             .order_by(tempItemOrder)
             .get('secrets', function(err, results, fields) {
                 if (err) {
-                    res.json({
+                    res.jsonp({
                         error: err
                     })
-                } else { 
-                    res.json({    
-                    	totalCount: req.tCount,
+                } else {
+                    res.jsonp({
+                        totalCount: req.tCount,
                         result: results
                     })
                 }
@@ -87,16 +87,18 @@ exports.viewFiveRecords = function(req, res) {
 
 exports.createRecord = function(req, res) {
     var receivedData = crypto.decode(req.query.input);
-    var date = new Date();
+    var date = Date.now();
     receivedData.data.post_date = date;
     Db.getNewAdapter(function(db) {
         db.insert('secrets', receivedData.data, function(err, info) {
             if (err) {
-                res.json({
+
+                res.jsonp({
                     error: err
                 })
             } else {
-                res.json({
+                console.log((new Date()) + 'one record inserted');
+                res.jsonp({
                     result: 'Record inserted at ' + info.insertId
                 })
             }
@@ -116,11 +118,11 @@ exports.viewByID = function(req, res) {
         db.where(input)
             .get('secrets', function(err, results, fields) {
                 if (err) {
-                    res.json({
+                    res.jsonp({
                         error: err
                     })
                 } else {
-                    res.json({
+                    res.jsonp({
                         result: results
                     })
                 }
@@ -138,11 +140,11 @@ exports.viewRecordsByTag = function(req, res) {
         db.where(input)
             .get('secrets', function(err, results, fields) {
                 if (err) {
-                    res.json({
+                    res.jsonp({
                         error: err
                     })
                 } else {
-                    res.json({
+                    res.jsonp({
                         result: results
                     })
                 }
@@ -161,20 +163,20 @@ exports.updateByID = function(req, res) {
     // };
 
     var receivedData = crypto.decode(req.query.input);
-
-    var date = new Date();
-
+    var date = Date.now();
     receivedData.data.post_date = date;
     Db.getNewAdapter(function(db) {
         db.where({
             id: receivedData.id
         }).update('secrets', receivedData.data, function(err) {
             if (err) {
-                res.json({
+                res.jsonp({
                     error: err
                 })
             } else {
-                res.json({
+
+                console.log((new Date()) + 'one record updated');
+                res.jsonp({
                     result: 'Record updated'
                 })
             }
@@ -194,11 +196,12 @@ exports.deleteByID = function(req, res) {
             })
             .delete('secrets', function(err) {
                 if (err) {
-                    res.json({
+                    res.jsonp({
                         error: err
                     })
                 } else {
-                    res.json({
+                    console.log((new Date()) + 'one record deleted');
+                    res.jsonp({
                         result: 'Record Deleted'
                     })
                 }
