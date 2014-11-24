@@ -27,7 +27,7 @@ app.use(cors());
 // app.use(express.static(__dirname + '/public'));
 
 app.get('/', function(req, res) {
-    res.send(new Date() + "Server is running. Ip address: " + ipaddress + "port: " + port);
+    res.send(new Date() + ". Server is running. Ip address: " + ipaddress + "port: " + port);
 })
 
 app.get('/secrets', secrets.viewAll)
