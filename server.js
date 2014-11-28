@@ -1,7 +1,8 @@
 var express = require('express'),
     cors = require('cors'),
-    // secrets = require('./services/secrets')
-    secrets = require('./services/secrets-pooling')
+    session = require('express-session'),
+    secrets = require('./services/secrets'),
+    users = require('./services/users')
 
 
 var app = express()
@@ -29,6 +30,12 @@ app.use(cors());
 app.get('/', function(req, res) {
     res.send(new Date() + ". Server is running. Ip address: " + ipaddress + "port: " + port);
 })
+
+app.get('/users/register', users.emailCheck, users.register)
+
+app.get('/users/login', users.login)
+
+app.get('/users/logout', users.logout)
 
 app.get('/secrets', secrets.viewAll)
 

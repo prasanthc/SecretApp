@@ -1,61 +1,159 @@
-var Db = require('mysql-activerecord')
+var Db = require('./db');
+var crypto = require('../utils/crypto')
 
-var db = new Db.Adapter({
-    server: 'localhost',
-    username: 'root',
-    password: 'eternalpeace',
-    database: 'testing'
-})
+
+exports.totalCount = function(req, res, next) {
+    var receivedData = crypto.decode(req.query.input);
+    var searchTags = null;
+
+    if (receivedData.searchTag) {
+        searchTags = receivedData.searchTag;
+    }
+
+    Db.getNewAdapter(function(db) {
+        db.where(searchTags).count('secrets', function(err, results, fields) {
+            if (err) {
+                res.jsonp({
+                    error: err
+                })
+            } else {
+                req.tCount = results;
+                next();
+            }
+            db.releaseConnection();
+        });
+    });
+}
 
 exports.viewAll = function(req, res) {
-    db.get('secrets', function(err, results, fields) {
-        res.json({
-            result: results
-        })
+    Db.getNewAdapter(function(db) {
+        db.get('secrets', function(err, results, fields) {
+            if (err) {
+                res.jsonp({
+                    error: err
+                })
+            } else {
+                res.jsonp({
+                    result: results
+                })
+            }
+            db.releaseConnection();
+        });
+    });
+}
+
+exports.viewFiveRecords = function(req, res) {
+    var tagToSearch = null;
+    var tempItemOrder = null;
+
+    // to test
+    // var receivedData = {
+    //     pageNo: 1,
+    //     searchTag: {
+    //         post_location: 'London'
+    //     }
+    // }
+
+    var receivedData = crypto.decode(req.query.input);
+
+    if (receivedData.orderBy) {
+        tempItemOrder = receivedData.orderBy.field + " " + receivedData.orderBy.ascOrDesc;
+    }
+
+    if (receivedData.searchTag) {
+        tagToSearch = receivedData.searchTag;
+    }
+
+    var recordSet = (receivedData.pageNo - 1) * 5;
+    Db.getNewAdapter(function(db) {
+        db
+            .where(tagToSearch)
+            .limit(5, recordSet)
+            .order_by(tempItemOrder)
+            .get('secrets', function(err, results, fields) {
+                if (err) {
+                    res.jsonp({
+                        error: err
+                    })
+                } else {
+                    res.jsonp({
+                        totalCount: req.tCount,
+                        result: results
+                    })
+                }
+                db.releaseConnection();
+            });
     });
 }
 
 exports.createRecord = function(req, res) {
-    var receivedData = toDecodeAndParse(req.query.input);
-    var date = new Date();
+    var receivedData = crypto.decode(req.query.input);
+    var date = Date.now();
     receivedData.data.post_date = date;
-    db.insert('secrets', receivedData.data, function(err, info) {
-        if (err) {
-            res.json({
-                error: err
-            })
-        } else {
-            res.json({
-                result: 'Record inserted at ' + info.insertId
-            })
-        }
-    })
-}
-
-function toDecodeAndParse(encodedData) {
-    var decodedData = new Buffer(encodedData, 'base64').toString('ascii')
-    var parsedData = JSON.parse(decodedData)
-    return parsedData;
+    console.log(typeof(receivedData));
+    console.log(receivedData);
+    Db.getNewAdapter(function(db) {
+        db.insert('secrets', receivedData.data, function(err, info) {
+            if (err) {
+                // res.jsonp({
+                //     error: err
+                // })
+                console.log()
+            } else {
+                console.log((new Date()) + 'one record inserted');
+                res.jsonp({
+                    result: 'Record inserted at ' + info.insertId
+                })
+            }
+            db.releaseConnection();
+        });
+    });
 }
 
 exports.viewByID = function(req, res) {
     // var input = {
-    //     id: 302
+    //     post_location: 'new york',
+    //     user: 'tester'
     // }
-    var receivedData = toDecodeAndParse(req.query.input);
 
-    db.where(receivedData.id)
-        .get('secrets', function(err, results, fields) {
-            if (err) {
-                res.json({
-                    error: err
-                })
-            } else {
-                res.json({
-                    result: results
-                })
-            }
-        });
+    var receivedData = crypto.decode(req.query.input);
+    Db.getNewAdapter(function(db) {
+        db.where(input)
+            .get('secrets', function(err, results, fields) {
+                if (err) {
+                    res.jsonp({
+                        error: err
+                    })
+                } else {
+                    res.jsonp({
+                        result: results
+                    })
+                }
+                db.releaseConnection();
+            });
+    });
+}
+
+exports.viewRecordsByTag = function(req, res) {
+    // var input = {
+    //         post_location: 'New York'
+    //     }
+    var receivedData = crypto.decode(req.query.input);
+    Db.getNewAdapter(function(db) {
+        db.where(input)
+            .get('secrets', function(err, results, fields) {
+                if (err) {
+                    res.jsonp({
+                        error: err
+                    })
+                } else {
+                    res.jsonp({
+                        result: results
+                    })
+                }
+                db.releaseConnection();
+            })
+    })
 }
 
 exports.updateByID = function(req, res) {
@@ -67,24 +165,26 @@ exports.updateByID = function(req, res) {
     //     }
     // };
 
-    var receivedData = toDecodeAndParse(req.query.input);
-
-    var date = new Date();
-
+    var receivedData = crypto.decode(req.query.input);
+    var date = Date.now();
     receivedData.data.post_date = date;
+    Db.getNewAdapter(function(db) {
+        db.where({
+            id: receivedData.id
+        }).update('secrets', receivedData.data, function(err) {
+            if (err) {
+                res.jsonp({
+                    error: err
+                })
+            } else {
 
-    db.where({
-        id: receivedData.id
-    }).update('secrets', receivedData.data, function(err) {
-        if (err) {
-            res.json({
-                error: err
-            })
-        } else {
-            res.json({
-                result: 'Record updated'
-            })
-        }
+                console.log((new Date()) + 'one record updated');
+                res.jsonp({
+                    result: 'Record updated'
+                })
+            }
+            db.releaseConnection();
+        });
     });
 }
 
@@ -92,20 +192,23 @@ exports.deleteByID = function(req, res) {
     // var input = {
     //     id: 303
     // }
-    var receivedData = toDecodeAndParse(req.query.input);
-
-    db.where({
-            id: receivedData.id
-        })
-        .delete('secrets', function(err) {
-            if (err) {
-                res.json({
-                    error: err
-                })
-            } else {
-                res.json({
-                    result: 'Record Deleted'
-                })
-            }
-        });
+    var receivedData = crypto.decode(req.query.input);
+    Db.getNewAdapter(function(db) {
+        db.where({
+                id: receivedData.id
+            })
+            .delete('secrets', function(err) {
+                if (err) {
+                    res.jsonp({
+                        error: err
+                    })
+                } else {
+                    console.log((new Date()) + 'one record deleted');
+                    res.jsonp({
+                        result: 'Record Deleted'
+                    })
+                }
+                db.releaseConnection();
+            });
+    });
 }
